@@ -1,0 +1,28 @@
+services:
+  col-db:
+    image: postgres
+    container_name: col-db
+    restart: always
+    volumes: 
+      - ./data/col-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB="col"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: col-pgadmin
+    restart: always
+    environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.admin
+        PGADMIN_DEFAULT_PASSWORD: admin
+        PGADMIN_LISTEN_PORT: 80
+        PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED: "False"
+    volumes:
+        - ./data/pgadmin:/var/lib/pgadmin
+    ports:
+        - "8080:80"
