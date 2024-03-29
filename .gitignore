@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# jupyter notebooks
+*.ipynb
+
+# volume dir
+/data/
+
 # C extensions
 *.so
 
