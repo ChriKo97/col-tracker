@@ -12,6 +12,9 @@ def read_data() -> pd.DataFrame:
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
+    # convert to datetime
+    df["Datum"] = pd.to_datetime(df["Datum"])
+
     # remove alternative column
     df.drop(columns="Alternative", inplace=True)
 
@@ -61,5 +64,7 @@ def resample_data(
             objs=[df, tmp_df],
             ignore_index=True,
             copy=False)
+
+    df.sort_values("Datum", inplace=True)
 
     return df
