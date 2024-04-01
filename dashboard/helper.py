@@ -43,8 +43,8 @@ def resample_data(
         df: pd.DataFrame,
         _map: Dict) -> pd.DataFrame:
 
-    start_date = df["Datum"].min()
-    end_date = df["Datum"].max()
+    start_date = df["date"].min()
+    end_date = df["date"].max()
 
     date_range = pd.date_range(
         start=start_date,
@@ -65,6 +65,19 @@ def resample_data(
             ignore_index=True,
             copy=False)
 
-    df.sort_values("Datum", inplace=True)
+    df.sort_values("date", inplace=True, ignore_index=True)
+
+    return df
+
+def add_date_infos(df: pd.DataFrame) -> pd.DataFrame:
+
+    # add "month" column
+    df["month"] = df["date"].dt.month
+
+    # add year column
+    df["year"] = df["date"].dt.year
+
+    # add day of week column
+    df["dayofweek"] = df["date"].dt.dayofweek
 
     return df
