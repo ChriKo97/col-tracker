@@ -13,14 +13,14 @@ def read_data() -> pd.DataFrame:
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
     # convert to datetime
-    df["Datum"] = pd.to_datetime(df["Datum"])
+    df["date"] = pd.to_datetime(df["date"])
 
     # remove alternative column
-    df.drop(columns="Alternative", inplace=True)
+    df.drop(columns="alternative", inplace=True)
 
     # fill unnecessary with 0 and convert to bool
-    df.fillna({"Unnötig": 0}, inplace=True)
-    df["Unnötig"] = df["Unnötig"].astype(bool)
+    df.fillna({"unnecessary": 0}, inplace=True)
+    df["unnecessary"] = df["unnecessary"].astype(bool)
 
     return df
 
@@ -30,11 +30,11 @@ def create_mapping(
         _map: Dict = {}) -> Dict[str, str]:
     
     for idx, row in df.iterrows():
-        if not row["Bezeichnung"] in _map.keys():
-            _map[row["Bezeichnung"]] = row["Kategorie"]
+        if not row["name"] in _map.keys():
+            _map[row["name"]] = row["category"]
         else:
-            if not row["Kategorie"] == _map[row["Bezeichnung"]]:
-                raise UserWarning(f"Different categories for {row["Bezeichnung"]}")
+            if not row["category"] == _map[row["name"]]:
+                raise UserWarning(f"Different categories for {row["name"]}")
 
     return _map
 
@@ -53,12 +53,12 @@ def resample_data(
 
     for name, cat in _map.items():
         tmp_df = pd.DataFrame({
-            "Datum": date_range,
-            "Bezeichnung": name,
-            "Kategorie": cat,
-            "Kosten": 0,
-            "Wo": "",
-            "Unnötig": False})
+            "date": date_range,
+            "name": name,
+            "category": cat,
+            "costs": 0,
+            "where": "",
+            "unnecessary": False})
         
         df = pd.concat(
             objs=[df, tmp_df],
