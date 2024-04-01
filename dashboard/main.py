@@ -18,19 +18,31 @@ orig_df = helper.add_date_infos(orig_df)
 
 st.set_page_config(layout="wide")
 
-lcol, rcol = st.columns(2)
 
-with lcol:
-    start_date = st.date_input(
-        label="Start date",
-        value=orig_df["date"].dt.date.min(),
-        min_value=orig_df["date"].dt.date.min())
+timeframe = st.radio(
+    label="timeframe",
+    options=[
+        "All",
+        "Custom"],
+    horizontal=True)
 
-with rcol:
-    end_date = st.date_input(
-        label="End date",
-        value=orig_df["date"].dt.date.max(),
-        min_value=orig_df["date"].dt.date.min())
+if timeframe == "Custom":
+    lcol, rcol = st.columns(2)
+
+    with lcol:
+        start_date = st.date_input(
+            label="Start date",
+            value=orig_df["date"].dt.date.min(),
+            min_value=orig_df["date"].dt.date.min())
+
+    with rcol:
+        end_date = st.date_input(
+            label="End date",
+            value=orig_df["date"].dt.date.max(),
+            min_value=orig_df["date"].dt.date.min())
+elif timeframe == "All":
+    start_date = orig_df["date"].dt.date.min()
+    end_date = orig_df["date"].dt.date.max()
 
 cond = ((orig_df["date"].dt.date >= start_date) &
         (orig_df["date"].dt.date <= end_date))
