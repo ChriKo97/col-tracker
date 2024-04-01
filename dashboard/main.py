@@ -67,6 +67,7 @@ with overall:
 
     # plot average costs per category
     oa_monthly_df = oa_df.copy()
+    oa_monthly_df["month"] = oa_monthly_df["date"].dt.month
     oa_monthly_df = oa_monthly_df.groupby(
         ["month", "category"], as_index=False).sum(numeric_only=True)
     oa_monthly_df = oa_monthly_df.groupby("category", as_index=False).mean()
