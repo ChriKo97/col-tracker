@@ -21,9 +21,6 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # convert to datetime
     df["date"] = pd.to_datetime(df["date"])
 
-    # remove alternative column
-    df.drop(columns="alternative", inplace=True)
-
     # fill unnecessary with 0 and convert to bool
     df.fillna({"unnecessary": 0}, inplace=True)
     df["unnecessary"] = df["unnecessary"].astype(bool)
@@ -40,7 +37,7 @@ def create_mapping(
             _map[row["name"]] = row["category"]
         else:
             if not row["category"] == _map[row["name"]]:
-                raise UserWarning(f"Different categories for {row["name"]}")
+                raise UserWarning(f"Different categories for {row['name']}")
 
     return _map
 
@@ -62,7 +59,7 @@ def resample_data(
             "date": date_range,
             "name": name,
             "category": cat,
-            "costs": 0,
+            "cost": 0,
             "where": "",
             "unnecessary": False})
         
