@@ -1,3 +1,5 @@
+import os
+
 import helper
 
 import streamlit as st
@@ -13,7 +15,12 @@ _map = helper.create_mapping(orig_df)
 
 orig_df = helper.resample_data(orig_df, _map)
 
-orig_df = helper.add_date_infos(orig_df)
+engine = helper.connect_to_database(
+    user=db_user,
+    password=db_password,
+    name=db_name,
+    host="localhost",
+    port=db_port)
 
 
 st.set_page_config(layout="wide")

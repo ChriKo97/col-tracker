@@ -1,13 +1,19 @@
 from typing import Dict
 
 import pandas as pd
+from sqlalchemy import create_engine
 
 
-def read_data() -> pd.DataFrame:
+def connect_to_database(
+        user: str = "admin",
+        password: str = "",
+        name: str = "col",
+        host: str = "col-database",
+        port: int = 5432):
 
-    orig_df = pd.read_excel("C:\\Users\\ck4400e\\Documents\\03_privat\\02_coding\\03_kosten_graphs\\Lebenshaltungskosten.xlsx")
+    engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{name}")
 
-    return orig_df
+    return engine
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
