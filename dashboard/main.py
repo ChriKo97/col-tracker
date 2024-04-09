@@ -26,7 +26,6 @@ engine = helper.connect_to_database(
 
 st.set_page_config(layout="wide")
 
-
 timeframe = st.radio(
     label="timeframe",
     options=[
@@ -34,28 +33,49 @@ timeframe = st.radio(
         "Custom"],
     horizontal=True)
 
+min_max_dates = pd.read_sql("SELECT MIN(date), max(date) FROM col", engine)
+min_date = min_max_dates.loc[0, "min"]
+max_date = min_max_dates.loc[0, "max"]
+
 if timeframe == "Custom":
     lcol, rcol = st.columns(2)
 
     with lcol:
         start_date = st.date_input(
             label="Start date",
-            value=orig_df["date"].dt.date.min(),
-            min_value=orig_df["date"].dt.date.min())
+            value=min_date,
+            min_value=min_date)
 
     with rcol:
         end_date = st.date_input(
             label="End date",
-            value=orig_df["date"].dt.date.max(),
-            min_value=orig_df["date"].dt.date.min())
+            value=max_date,
+            min_value=start_date)
+
+    sql = f"""
+        SELECT
+            *
+        FROM
+            col
+        WHERE
+            date >= '{start_date}'
+        AND
+            date <= '{end_date}'
+    """
+    orig_df = pd.read_sql(sql, engine)
+
 elif timeframe == "All":
-    start_date = orig_df["date"].dt.date.min()
-    end_date = orig_df["date"].dt.date.max()
+    orig_df = pd.read_sql("SELECT * FROM col", engine)
 
-cond = ((orig_df["date"].dt.date >= start_date) &
-        (orig_df["date"].dt.date <= end_date))
-filtered_df = orig_df[cond].reset_index(drop=True)
+orig_df = helper.clean_data(orig_df)
 
+_map = helper.create_mapping(orig_df)
+
+orig_df = helper.resample_data(orig_df, _map)
+
+orig_df = helper.add_date_infos(orig_df)
+
+filtered_df = orig_df.copy()
 
 overall, by_cat, by_store, by_article = st.tabs(
     ["Overall", "By category", "By store", "By article"])
