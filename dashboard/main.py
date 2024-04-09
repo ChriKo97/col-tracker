@@ -7,13 +7,14 @@ import plotly.express as px
 import pandas as pd
 
 
-orig_df = helper.read_data()
+from dotenv import load_dotenv
+load_dotenv()
 
-orig_df = helper.clean_data(orig_df)
+db_user = os.getenv("POSTGRES_USER")
+db_password = os.getenv("POSTGRES_PASSWORD")
+db_name = os.getenv("DB_NAME", "col")
+db_port = os.getenv("DB_PORT", 5432)
 
-_map = helper.create_mapping(orig_df)
-
-orig_df = helper.resample_data(orig_df, _map)
 
 engine = helper.connect_to_database(
     user=db_user,
