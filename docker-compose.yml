@@ -1,5 +1,5 @@
 services:
-  col-db:
+  col-database:
     image: postgres
     container_name: col-database
     restart: always

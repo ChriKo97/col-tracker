@@ -9,12 +9,10 @@ import plotly.express as px
 import pandas as pd
 
 
-from dotenv import load_dotenv
-load_dotenv()
-
-db_user = os.getenv("POSTGRES_USER")
+db_user = os.getenv("POSTGRES_USER", "admin")
 db_password = os.getenv("POSTGRES_PASSWORD")
 db_name = os.getenv("DB_NAME", "col")
+db_host = os.getenv("DB_HOST", "col-database")
 db_port = os.getenv("DB_PORT", 5432)
 
 
@@ -22,7 +20,7 @@ engine = helper.connect_to_database(
     user=db_user,
     password=db_password,
     name=db_name,
-    host="localhost",
+    host=db_host,
     port=db_port)
 
 
