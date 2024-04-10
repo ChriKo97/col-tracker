@@ -71,11 +71,11 @@ def cost_per_store(cat_df: pd.DataFrame):
     df = cat_df.copy()
 
     # cost per store
-    df = df.groupby("where", as_index=False).sum(numeric_only=True)
-    df = df[df["where"] != ""]
+    df = df.groupby("store", as_index=False).sum(numeric_only=True)
+    df = df[df["store"] != ""]
     df.sort_values("cost", inplace=True, ignore_index=True)
     st.plotly_chart(
         figure_or_data=px.bar(
-            data_frame=df, x="where", y="cost",
+            data_frame=df, x="store", y="cost",
             title="Total costs per store"),
         use_container_width=True)

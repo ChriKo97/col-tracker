@@ -61,7 +61,7 @@ def resample_data(
             "name": name,
             "category": cat,
             "cost": 0,
-            "where": "",
+            "store": "",
             "unnecessary": False})
         
         df = pd.concat(
