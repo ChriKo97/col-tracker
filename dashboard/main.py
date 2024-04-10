@@ -1,6 +1,7 @@
 import os
 
 import helper
+import timeframe
 import overall
 import category
 
@@ -26,46 +27,18 @@ engine = helper.connect_to_database(
 
 st.set_page_config(layout="wide")
 
-timeframe = st.radio(
-    label="timeframe",
-    options=[
-        "All",
-        "Custom"],
-    horizontal=True)
+# get min and max dates to choose timeframe from
+min_date, max_date = timeframe.get_min_max_dates(engine)
 
-min_max_dates = pd.read_sql("SELECT MIN(date), max(date) FROM col", engine)
-min_date = min_max_dates.loc[0, "min"]
-max_date = min_max_dates.loc[0, "max"]
+# choose time frame to look at
+time_frame = timeframe.display_timeframe_options(
+    min_date=min_date,
+    max_date=max_date)
 
-if timeframe == "Custom":
-    lcol, rcol = st.columns(2)
+# get SQL query for dataframe
+sql = timeframe.create_sql_query(time_frame)
 
-    with lcol:
-        start_date = st.date_input(
-            label="Start date",
-            value=min_date,
-            min_value=min_date)
-
-    with rcol:
-        end_date = st.date_input(
-            label="End date",
-            value=max_date,
-            min_value=start_date)
-
-    sql = f"""
-        SELECT
-            *
-        FROM
-            col
-        WHERE
-            date >= '{start_date}'
-        AND
-            date <= '{end_date}'
-    """
-    orig_df = pd.read_sql(sql, engine)
-
-elif timeframe == "All":
-    orig_df = pd.read_sql("SELECT * FROM col", engine)
+orig_df = pd.read_sql(sql, engine)
 
 orig_df = helper.clean_data(orig_df)
 

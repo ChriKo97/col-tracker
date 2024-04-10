@@ -11,10 +11,7 @@ RUN mkdir /app
 RUN chown -R admin /app
 USER admin
 
-COPY ./dashboard/main.py ./app
-COPY ./dashboard/helper.py ./app
-COPY ./dashboard/overall.py ./app
-COPY ./dashboard/category.py ./app
+COPY ./dashboard/ ./app
 
 WORKDIR /app
 
