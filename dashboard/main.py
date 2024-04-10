@@ -1,6 +1,7 @@
 import os
 
 import helper
+import sidebar
 import timeframe
 import overall
 import category
@@ -26,6 +27,12 @@ engine = helper.connect_to_database(
 
 
 st.set_page_config(layout="wide")
+
+# sidebar stuff
+with st.sidebar:
+
+    # uploading of new data
+    sidebar.upload_new_file(engine)
 
 # get min and max dates to choose timeframe from
 min_date, max_date = timeframe.get_min_max_dates(engine)
