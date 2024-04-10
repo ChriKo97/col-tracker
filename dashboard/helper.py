@@ -2,6 +2,7 @@ from typing import Dict
 
 import pandas as pd
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 
 
 def connect_to_database(
@@ -82,5 +83,21 @@ def add_date_infos(df: pd.DataFrame) -> pd.DataFrame:
 
     # add day of week column
     df["dayofweek"] = df["date"].dt.dayofweek
+
+    return df
+
+def read_clean_data(
+        sql: str,
+        engine: Engine):
+
+    df = pd.read_sql(sql, engine)
+
+    df = clean_data(df)
+
+    _map = create_mapping(df)
+
+    df = resample_data(df, _map)
+
+    df = add_date_infos(df)
 
     return df

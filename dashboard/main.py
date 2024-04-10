@@ -35,18 +35,11 @@ time_frame = timeframe.display_timeframe_options(
     min_date=min_date,
     max_date=max_date)
 
-# get SQL query for dataframe
+# create SQL query for dataframe
 sql = timeframe.create_sql_query(time_frame)
 
-orig_df = pd.read_sql(sql, engine)
-
-orig_df = helper.clean_data(orig_df)
-
-_map = helper.create_mapping(orig_df)
-
-orig_df = helper.resample_data(orig_df, _map)
-
-orig_df = helper.add_date_infos(orig_df)
+# read and clean data
+orig_df = helper.read_clean_data(sql, engine)
 
 
 overall_tab, cat_tab, store_tab, article_tab = st.tabs(
