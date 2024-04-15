@@ -58,7 +58,7 @@ with overall_tab:
 
     overall.average_costs(orig_df)
 
-    overall.total_costs(orig_df)
+    overall.unnecessary_cumulative(orig_df)
 
     overall.costs_over_time(orig_df)
 

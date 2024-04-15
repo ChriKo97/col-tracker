@@ -1,9 +1,37 @@
+import helper
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 
 
-def cumulative_costs(orig_df: pd.DataFrame) -> st.plotly_chart:
+def cumulative_costs(orig_df: pd.DataFrame):
+
+    df = orig_df.copy()
+    df = df.groupby(["date", "category"], as_index=False).sum(
+        numeric_only=True)
+    df["cumulative costs"] = df.groupby(
+        "category", as_index=False)["cost"].cumsum()
+
+    area_or_lines = st.radio(
+        label="", options=["Area", "Line"],
+        key="area_or_lines",
+        horizontal=True)
+
+    if area_or_lines == "Area":
+        fig = px.area(
+            df, x="date", y="cumulative costs", color="category",
+            title="Cumulative cost over time")
+
+    elif area_or_lines == "Line":
+        fig = px.line(
+            df, x="date", y="cumulative costs", color="category",
+            title="Cumulative cost over time")
+
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def cumulative_costs_per_cat(orig_df: pd.DataFrame):
 
     df = orig_df.copy()
 
@@ -15,8 +43,9 @@ def cumulative_costs(orig_df: pd.DataFrame) -> st.plotly_chart:
     st.plotly_chart(
         figure_or_data=px.line(
             data_frame=oa_df, x="date", y="cumulative costs", color="category",
-            title="Cumulative cost over time"),
+            title="Cumulative cost over time per category"),
         use_container_width=True)
+
 
 def average_costs(orig_df: pd.DataFrame) -> st.plotly_chart:
 
@@ -35,7 +64,8 @@ def average_costs(orig_df: pd.DataFrame) -> st.plotly_chart:
             title="Mean costs per month per category"),
         use_container_width=True)
 
-def total_costs(orig_df: pd.DataFrame) -> st.plotly_chart:
+
+def total_costs_per_category(orig_df: pd.DataFrame) -> st.plotly_chart:
 
     df = orig_df.copy()
 
@@ -49,6 +79,7 @@ def total_costs(orig_df: pd.DataFrame) -> st.plotly_chart:
             title="Cumulative costs per category"),
         use_container_width=True)
 
+
 def costs_over_time(orig_df: pd.DataFrame) -> st.plotly_chart:
 
     df = orig_df.copy()
@@ -61,4 +92,45 @@ def costs_over_time(orig_df: pd.DataFrame) -> st.plotly_chart:
         figure_or_data=px.line(
             data_frame=df, x="date", y="cost", color="category",
             title="Costs over time"),
+        use_container_width=True)
+
+
+def unnecessary_cumulative(orig_df: pd.DataFrame):
+
+    df = orig_df.copy()
+
+    # filter for not necessary items only
+    df = df[df["unnecessary"] == True].reset_index(drop=True)
+
+    # recreate mapping and resample data for this
+    _map = helper.create_mapping(df)
+
+    df = helper.resample_data(df=df, _map=_map, unnecessary=True)
+
+    # calc sum per date and category
+    df = df.groupby(["date", "category"], as_index=False).sum(
+        numeric_only=True).reset_index(drop=True)
+
+    # calc cumulative costs per category
+    df["cumulative costs"] = df.groupby(
+        "category", as_index=False)["cost"].cumsum()
+
+    area_or_lines = st.radio(
+        label="", options=["Area", "Line"],
+        key="area_or_lines_unnecessary",
+        horizontal=True)
+
+    if area_or_lines == "Area":
+        fig = px.area(
+            df, x="date", y="cumulative costs", color="category",
+            title="Cumulative cost over time")
+
+    elif area_or_lines == "Line":
+        fig = px.line(
+            df, x="date", y="cumulative costs", color="category",
+            title="Cumulative cost over time")
+
+    # plot
+    st.plotly_chart(
+        figure_or_data=fig,
         use_container_width=True)

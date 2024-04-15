@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS col(
     category TEXT,
     name TEXT,
     cost DOUBLE PRECISION,
-    "store" TEXT,
+    store TEXT,
     unnecessary BOOL);

@@ -72,7 +72,6 @@ def feed_to_database(df, engine):
     
     return
 
-
 def upload_new_file(engine):
 
     with st.expander("Update data"):

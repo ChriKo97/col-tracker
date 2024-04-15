@@ -45,7 +45,8 @@ def create_mapping(
 
 def resample_data(
         df: pd.DataFrame,
-        _map: Dict) -> pd.DataFrame:
+        _map: Dict,
+        unnecessary: bool = False) -> pd.DataFrame:
 
     start_date = df["date"].min()
     end_date = df["date"].max()
@@ -62,7 +63,7 @@ def resample_data(
             "category": cat,
             "cost": 0,
             "store": "",
-            "unnecessary": False})
+            "unnecessary": unnecessary})
         
         df = pd.concat(
             objs=[df, tmp_df],
