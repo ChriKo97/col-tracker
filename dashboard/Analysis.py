@@ -1,14 +1,11 @@
 import os
 
 import helper
-import sidebar
-import timeframe
-import overall
-import category
+import analysis.timeframe as timeframe
+import analysis.overall as overall
+import analysis.category as category
 
 import streamlit as st
-import plotly.express as px
-import pandas as pd
 
 
 db_user = os.getenv("POSTGRES_USER", "admin")
@@ -16,7 +13,6 @@ db_password = os.getenv("POSTGRES_PASSWORD")
 db_name = os.getenv("DB_NAME", "col")
 db_host = os.getenv("DB_HOST", "col-database")
 db_port = os.getenv("DB_PORT", 5432)
-
 
 engine = helper.connect_to_database(
     user=db_user,
@@ -27,12 +23,6 @@ engine = helper.connect_to_database(
 
 
 st.set_page_config(layout="wide")
-
-# sidebar stuff
-with st.sidebar:
-
-    # uploading of new data
-    sidebar.upload_new_file(engine)
 
 # get min and max dates to choose timeframe from
 min_date, max_date = timeframe.get_min_max_dates(engine)
