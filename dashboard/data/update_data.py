@@ -58,16 +58,57 @@ def check_prepare_file(file):
 
     return cleaned_df
 
-def feed_to_database(df, engine):
-    original_df = pd.read_sql("SELECT * FROM col", engine)
-
-    new_database_df = pd.concat([df, original_df], ignore_index=True)
-    new_database_df.drop_duplicates(inplace=True, ignore_index=True)
-
-    new_database_df.to_sql(
-        name="col",
-        con=engine,
-        if_exists="replace", 
-        index=False)
+def confirm(add_replace):
+    if add_replace == "append":
+        msg = "I understand that everything in the table will be *added* to the database"
+        return st.checkbox(msg)
     
-    return
+    elif add_replace == "replace":
+        msg = "I understand that everything in the database will be *deleted* and *replaced* by the table"
+        return st.checkbox(msg)
+
+def feed_to_database(
+        df,
+        engine,
+        append_replace):
+
+    if append_replace == "append":
+            df.to_sql(
+                name="col",
+                con=engine,
+                if_exists=append_replace, 
+                index=False)
+
+    elif append_replace == "replace":
+            df.to_sql(
+                name="col",
+                con=engine,
+                if_exists=append_replace, 
+                index=False)
+
+def upload_new_file(
+        engine,
+        append_replace):
+
+    label = "Upload your Excel file containing your costs of living here"
+
+    help = """This file should be an .xlsx file containing the columns
+    'date', 'category', 'name', 'cost', 'store' and 'unncessary'"""
+
+    file = st.file_uploader(
+        label=label,
+        key=append_replace,
+        help=help)
+    
+    if file:
+        df = check_prepare_file(file)
+
+        if isinstance(df, pd.DataFrame):
+
+            st.write("If everything seems fine you can feed it to the database!")
+            if confirm(append_replace):
+                st.button(
+                    label="Feed to database!",
+                    on_click=feed_to_database,
+                    args=(df, engine, append_replace))
+                del file, df
