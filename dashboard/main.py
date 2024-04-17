@@ -1,6 +1,8 @@
 import os
 
 import helper
+import sidebar
+import timeframe
 import overall
 import category
 
@@ -26,54 +28,25 @@ engine = helper.connect_to_database(
 
 st.set_page_config(layout="wide")
 
-timeframe = st.radio(
-    label="timeframe",
-    options=[
-        "All",
-        "Custom"],
-    horizontal=True)
+# sidebar stuff
+with st.sidebar:
 
-min_max_dates = pd.read_sql("SELECT MIN(date), max(date) FROM col", engine)
-min_date = min_max_dates.loc[0, "min"]
-max_date = min_max_dates.loc[0, "max"]
+    # uploading of new data
+    sidebar.upload_new_file(engine)
 
-if timeframe == "Custom":
-    lcol, rcol = st.columns(2)
+# get min and max dates to choose timeframe from
+min_date, max_date = timeframe.get_min_max_dates(engine)
 
-    with lcol:
-        start_date = st.date_input(
-            label="Start date",
-            value=min_date,
-            min_value=min_date)
+# choose time frame to look at
+time_frame = timeframe.display_timeframe_options(
+    min_date=min_date,
+    max_date=max_date)
 
-    with rcol:
-        end_date = st.date_input(
-            label="End date",
-            value=max_date,
-            min_value=start_date)
+# create SQL query for dataframe
+sql = timeframe.create_sql_query(time_frame)
 
-    sql = f"""
-        SELECT
-            *
-        FROM
-            col
-        WHERE
-            date >= '{start_date}'
-        AND
-            date <= '{end_date}'
-    """
-    orig_df = pd.read_sql(sql, engine)
-
-elif timeframe == "All":
-    orig_df = pd.read_sql("SELECT * FROM col", engine)
-
-orig_df = helper.clean_data(orig_df)
-
-_map = helper.create_mapping(orig_df)
-
-orig_df = helper.resample_data(orig_df, _map)
-
-orig_df = helper.add_date_infos(orig_df)
+# read and clean data
+orig_df = helper.read_clean_data(sql, engine)
 
 
 overall_tab, cat_tab, store_tab, article_tab = st.tabs(
@@ -85,7 +58,7 @@ with overall_tab:
 
     overall.average_costs(orig_df)
 
-    overall.total_costs(orig_df)
+    overall.unnecessary_cumulative(orig_df)
 
     overall.costs_over_time(orig_df)
 
