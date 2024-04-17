@@ -18,17 +18,18 @@ def cumulative_costs(orig_df: pd.DataFrame):
         key="area_or_lines",
         horizontal=True)
 
+    area_fig = px.area(
+        df, x="date", y="cumulative costs", color="category",
+        title="Cumulative cost over time")
+
+    line_fig = px.line(
+        df, x="date", y="cumulative costs", color="category",
+        title="Cumulative cost over time")
+
     if area_or_lines == "Area":
-        fig = px.area(
-            df, x="date", y="cumulative costs", color="category",
-            title="Cumulative cost over time")
-
+        st.plotly_chart(area_fig, use_container_width=True)
     elif area_or_lines == "Line":
-        fig = px.line(
-            df, x="date", y="cumulative costs", color="category",
-            title="Cumulative cost over time")
-
-    st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(line_fig, use_container_width=True)
 
 
 def cumulative_costs_per_cat(orig_df: pd.DataFrame):
@@ -120,17 +121,16 @@ def unnecessary_cumulative(orig_df: pd.DataFrame):
         key="area_or_lines_unnecessary",
         horizontal=True)
 
-    if area_or_lines == "Area":
-        fig = px.area(
-            df, x="date", y="cumulative costs", color="category",
-            title="Cumulative cost over time")
+    area_fig = px.area(
+        df, x="date", y="cumulative costs", color="category",
+        title="Cumulative unnecessary cost over time")
 
-    elif area_or_lines == "Line":
-        fig = px.line(
-            df, x="date", y="cumulative costs", color="category",
-            title="Cumulative cost over time")
+    line_fig = px.line(
+        df, x="date", y="cumulative costs", color="category",
+        title="Cumulative unnecessary cost over time")
 
     # plot
-    st.plotly_chart(
-        figure_or_data=fig,
-        use_container_width=True)
+    if area_or_lines == "Area":
+        st.plotly_chart(area_fig, use_container_width=True)
+    elif area_or_lines == "Line":
+        st.plotly_chart(line_fig, use_container_width=True)
