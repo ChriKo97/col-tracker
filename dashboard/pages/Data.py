@@ -4,7 +4,6 @@ import data.update_data as update_data
 import helper
 
 import streamlit as st
-import pandas as pd
 
 
 db_user = os.getenv("POSTGRES_USER", "admin")

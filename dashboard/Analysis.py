@@ -7,14 +7,12 @@ import analysis.category as category
 
 import streamlit as st
 
-from dotenv import load_dotenv
-load_dotenv()
 
-db_host = os.getenv("DB_HOST", "col-database")
-db_port = os.getenv("DB_PORT", 5432)
-db_name = os.getenv("DB_NAME", "col")
 db_user = os.getenv("POSTGRES_USER", "admin")
 db_password = os.getenv("POSTGRES_PASSWORD")
+db_name = os.getenv("DB_NAME", "col")
+db_host = os.getenv("DB_HOST", "col-database")
+db_port = os.getenv("DB_PORT", 5432)
 
 engine = helper.connect_to_database(
     user=db_user,
