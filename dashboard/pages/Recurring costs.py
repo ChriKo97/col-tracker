@@ -1,30 +1,24 @@
-import streamlit as st
+import os
+
+import helper
+import recurring_costs.main as main
 
 
-with st.expander("Add recurring costs"):
-    left_col, right_col = st.columns(2)
+from dotenv import load_dotenv
+load_dotenv()
 
-    with left_col:
+db_user = os.getenv("POSTGRES_USER", "admin")
+db_password = os.getenv("POSTGRES_PASSWORD")
+db_name = os.getenv("DB_NAME", "col")
+db_host = os.getenv("DB_HOST", "col-database")
+db_port = os.getenv("DB_PORT", 5432)
 
-        day_of_cost = st.number_input(
-            label="On which day of the month does the cost occur?",
-            min_value=1, max_value=31, step=1,
-            value=1)
+engine = helper.connect_to_database(
+    user=db_user,
+    password=db_password,
+    host=db_host,
+    port=db_port,
+    name=db_name)
 
-        category = st.text_input(
-            label="Which category does the cost fall into?")
+main.add_recurring_cost(engine)
 
-        store = st.text_input(
-            label="Where / at which store does the cost occur? (optional)")
-
-    with right_col:
-
-        name_of_cost = st.text_input(
-            label="What is the name of the recurring cost?")
-
-        price_of_cost = st.number_input(
-            label="How much is the recurring cost?",
-            min_value=0.01, step=1.0, value=50.0)
-
-        st.write("Is this cost unnecessary?")
-        unncessary = st.checkbox("Unnecessary")

@@ -10,7 +10,7 @@ def connect_to_database(
         password: str = "",
         name: str = "col",
         host: str = "col-database",
-        port: int = 5432):
+        port: int = 5432) -> Engine:
 
     engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{name}")
 
