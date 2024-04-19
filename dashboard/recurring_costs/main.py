@@ -2,6 +2,31 @@ import recurring_costs.db_service as db_service
 
 from sqlalchemy.engine import Engine
 import streamlit as st
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
+
+def create_end_date(
+        start_date: date,
+        end: str):
+
+    if end == "After 1 week":
+        end_date = start_date + relativedelta(weeks=1)
+    elif end == "After 1 month":
+        end_date = start_date + relativedelta(months=30)
+    elif end == "After 1 year":
+        end_date = start_date + relativedelta(years=1)
+    elif end == "After 5 years":
+        end_date = start_date + relativedelta(years=5)
+    elif end == "Never":
+        end_date = date(2999, 12, 31)
+    elif end == "Choose a date":
+        end_date = st.date_input(
+            label="recurring_end_date_input",
+            label_visibility="collapsed",
+            min_value=start_date)
+
+    return end_date
 
 
 def view_recurring_costs(engine: Engine):
@@ -10,39 +35,59 @@ def view_recurring_costs(engine: Engine):
 
     with st.expander("View your recurring costs"):
 
-        st.dataframe(
-            data=recurring_costs,
-            use_container_width=True)
+        if recurring_costs.empty:
+            st.write("You do not have any recurring costs!")
+        else:
+            st.dataframe(
+                data=recurring_costs,
+                use_container_width=True)
 
 
 def add_recurring_cost(engine: Engine):
     with st.expander("Add recurring cost"):
-        left_col, right_col = st.columns(2)
 
-        with left_col:
+        start_date = st.date_input(
+            label="When does this cost start occuring?",
+            value=date.today())
 
-            day_of_cost = st.number_input(
-                label="On which day of the month does the cost occur?",
-                min_value=1, max_value=31, step=1,
-                value=1)
+        name_of_cost = st.text_input(
+            label="What is the name of the recurring cost?")
 
-            category = st.text_input(
-                label="Which category does the cost fall into?")
+        category = st.text_input(
+            label="Which category does the cost fall into?")
 
-            store = st.text_input(
-                label="Where / at which store does the cost occur? (optional)")
+        store = st.text_input(
+            label="Where / at which store does the cost occur? (optional)")
 
-        with right_col:
+        price_of_cost = st.number_input(
+            label="How much is the recurring cost?",
+            min_value=0.01, step=1.0, value=50.0)
 
-            name_of_cost = st.text_input(
-                label="What is the name of the recurring cost?")
+        st.write("Is this cost unnecessary?")
+        unncessary = st.checkbox("Unnecessary")
 
-            price_of_cost = st.number_input(
-                label="How much is the recurring cost?",
-                min_value=0.01, step=1.0, value=50.0)
+        frequency = st.radio(
+            label="With which frequency does this cost occur?",
+            options=[
+                "Weekly",
+                "Bi-weekly",
+                "Monthly",
+                "Quarterly",
+                "Yearly"],
+            horizontal=True)
 
-            st.write("Is this cost unnecessary?")
-            unncessary = st.checkbox("Unnecessary")
+        end = st.radio(
+            label="When will this cost stop occuring?",
+            options=[
+                "After 1 week",
+                "After 1 month",
+                "After 1 year",
+                "After 5 years",
+                "Never",
+                "Choose a date"],
+            horizontal=True)
+
+        end_date = create_end_date(start_date, end)
 
         if name_of_cost:
 
@@ -54,7 +99,7 @@ def add_recurring_cost(engine: Engine):
                 st.write("Entry with that name already exists in database:")
                 st.dataframe(data_entry, use_container_width=True)
 
-        if day_of_cost and category and name_of_cost and price_of_cost:
+        if start_date and category and name_of_cost and price_of_cost:
 
             if not in_database:
 
@@ -63,15 +108,15 @@ def add_recurring_cost(engine: Engine):
                     on_click=db_service.add_to_database,
                     args=(
                         engine,
-                        day_of_cost,
+                        start_date,
+                        end_date,
+                        frequency,
                         category,
                         store,
                         name_of_cost,
                         price_of_cost,
                         unncessary,
                         "append"))
-
-                del day_of_cost, category, name_of_cost, price_of_cost
 
             else:
 
@@ -83,7 +128,9 @@ def add_recurring_cost(engine: Engine):
                         on_click=db_service.add_to_database,
                         args=(
                             engine,
-                            day_of_cost,
+                            start_date,
+                            end_date,
+                            frequency,
                             category,
                             store,
                             name_of_cost,
@@ -97,7 +144,9 @@ def add_recurring_cost(engine: Engine):
                         on_click=db_service.add_to_database,
                         args=(
                             engine,
-                            day_of_cost,
+                            start_date,
+                            end_date,
+                            frequency,
                             category,
                             store,
                             name_of_cost,

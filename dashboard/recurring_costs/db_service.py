@@ -4,6 +4,9 @@ import streamlit as st
 import pandas as pd
 from sqlalchemy.engine import Engine
 from sqlalchemy import text
+import datetime
+
+from sqlalchemy.exc import ProgrammingError
 
 
 def check_if_in_database(
@@ -22,9 +25,17 @@ def check_if_in_database(
 
 def get_recurring_costs_from_db(engine: Engine):
 
-    return pd.read_sql(
-        "SELECT * FROM recurring_costs",
-        engine)
+    try:
+        df = pd.read_sql(
+            "SELECT * FROM recurring_costs",
+            engine)
+        return df
+    except ProgrammingError:
+        create_table(engine)
+        df = pd.read_sql(
+            "SELECT * FROM recurring_costs",
+            engine)
+        return df
 
 
 def create_table(engine: Engine):
@@ -33,7 +44,9 @@ def create_table(engine: Engine):
 
         sql = f"""
             CREATE TABLE IF NOT EXISTS recurring_costs (
-                day INTEGER,
+                "start" DATE,
+                "end" DATE,
+                frequency TEXT,
                 name TEXT,
                 category TEXT,
                 cost DOUBLE PRECISION,
@@ -48,7 +61,9 @@ def create_table(engine: Engine):
 
 def add_to_table(
         engine: Engine,
-        day: int,
+        start_date: datetime.date,
+        end_date: datetime.date,
+        frequency: str,
         name: str,
         category: str,
         cost: float,
@@ -57,7 +72,9 @@ def add_to_table(
 
     df = pd.DataFrame(
         data={
-            "day": day,
+            "start": start_date,
+            "end": end_date,
+            "frequency": frequency,
             "name": name,
             "category": category,
             "cost": cost,
@@ -90,7 +107,9 @@ def remove_from_table(
 
 def add_to_database(
         engine: Engine,
-        day_of_cost: int,
+        start_date: datetime.date,
+        end_date: datetime.date,
+        frequency: str,
         category: str,
         store: str,
         name_of_cost: str,
@@ -107,7 +126,9 @@ def add_to_database(
 
     add_to_table(
         engine=engine,
-        day=day_of_cost,
+        start_date=start_date,
+        end_date=end_date,
+        frequency=frequency,
         name=name_of_cost,
         category=category,
         cost=price_of_cost,
