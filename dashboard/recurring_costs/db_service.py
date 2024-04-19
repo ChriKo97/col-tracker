@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import streamlit as st
 import pandas as pd
 from sqlalchemy.engine import Engine

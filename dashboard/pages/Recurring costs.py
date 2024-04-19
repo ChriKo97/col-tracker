@@ -3,6 +3,8 @@ import os
 import helper
 import recurring_costs.main as main
 
+import streamlit as st
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -19,6 +21,10 @@ engine = helper.connect_to_database(
     host=db_host,
     port=db_port,
     name=db_name)
+
+st.set_page_config(layout='wide')
+
+main.view_recurring_costs(engine)
 
 main.add_recurring_cost(engine)
 

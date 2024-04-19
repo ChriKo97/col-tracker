@@ -4,6 +4,17 @@ from sqlalchemy.engine import Engine
 import streamlit as st
 
 
+def view_recurring_costs(engine: Engine):
+
+    recurring_costs = db_service.get_recurring_costs_from_db(engine)
+
+    with st.expander("View your recurring costs"):
+
+        st.dataframe(
+            data=recurring_costs,
+            use_container_width=True)
+
+
 def add_recurring_cost(engine: Engine):
     with st.expander("Add recurring cost"):
         left_col, right_col = st.columns(2)
