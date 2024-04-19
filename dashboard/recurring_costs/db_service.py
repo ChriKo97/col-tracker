@@ -6,6 +6,27 @@ from sqlalchemy.engine import Engine
 from sqlalchemy import text
 
 
+def check_if_in_database(
+        engine: Engine,
+        name: str) -> Tuple[bool, pd.DataFrame]:
+
+    sql = f"SELECT * FROM recurring_costs WHERE name = '{name}'"
+
+    df = pd.read_sql(sql, engine)
+
+    if len(df) >= 1:
+        return True, df
+    else:
+        return False, df
+
+
+def get_recurring_costs_from_db(engine: Engine):
+
+    return pd.read_sql(
+        "SELECT * FROM recurring_costs",
+        engine)
+
+
 def create_table(engine: Engine):
 
     with engine.connect() as con:
@@ -24,6 +45,7 @@ def create_table(engine: Engine):
         con.commit()
         con.close()
 
+
 def add_to_table(
         engine: Engine,
         day: int,
@@ -32,7 +54,7 @@ def add_to_table(
         cost: float,
         store: str,
         unnecessary: bool):
-    
+
     df = pd.DataFrame(
         data={
             "day": day,
@@ -42,21 +64,29 @@ def add_to_table(
             "store": store,
             "unnecessary": unnecessary},
         index=[0])
-    
+
     df.to_sql(
-        name="recurring_costs", 
+        name="recurring_costs",
         con=engine,
         if_exists="append",
         index=False)
 
-    # cur = con.cursor()
 
-    # sql = f"""
-    #     INSERT INTO recurring_costs VALUES (%s, %s, %s, %s, %s, %s)
-    # """
-    # values = (day, name, category, cost, store, unnecessary)
+def remove_from_table(
+        engine: Engine,
+        name: str):
 
-    # cur.execute(sql, values)
+    with engine.connect() as con:
+
+        sql = f"""
+            DELETE FROM recurring_costs
+            WHERE name = '{name}'
+        """
+
+        con.execute(text(sql))
+        con.commit()
+        con.close()
+
 
 def add_to_database(
         engine: Engine,
@@ -65,9 +95,15 @@ def add_to_database(
         store: str,
         name_of_cost: str,
         price_of_cost: str,
-        unnecessary: bool):
+        unnecessary: bool,
+        append_replace: str):
 
     create_table(engine)
+
+    if append_replace == "replace":
+        remove_from_table(
+            engine=engine,
+            name=name_of_cost)
 
     add_to_table(
         engine=engine,
@@ -77,3 +113,5 @@ def add_to_database(
         cost=price_of_cost,
         store=store,
         unnecessary=unnecessary)
+
+    st.success("Successfully added entry to database!")

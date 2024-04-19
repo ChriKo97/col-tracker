@@ -44,15 +44,63 @@ def add_recurring_cost(engine: Engine):
             st.write("Is this cost unnecessary?")
             unncessary = st.checkbox("Unnecessary")
 
+        if name_of_cost:
+
+            in_database, data_entry = db_service.check_if_in_database(
+                engine=engine,
+                name=name_of_cost)
+
+            if in_database:
+                st.write("Entry with that name already exists in database:")
+                st.dataframe(data_entry, use_container_width=True)
+
         if day_of_cost and category and name_of_cost and price_of_cost:
 
-            st.button(
-                label="Add as recurring cost",
-                on_click=db_service.add_to_database,
-                args=(
-                    engine,
-                    day_of_cost,
-                    category,
-                    store,
-                    name_of_cost,
-                    price_of_cost, unncessary))
+            if not in_database:
+
+                st.button(
+                    label="Add as recurring cost",
+                    on_click=db_service.add_to_database,
+                    args=(
+                        engine,
+                        day_of_cost,
+                        category,
+                        store,
+                        name_of_cost,
+                        price_of_cost,
+                        unncessary,
+                        "append"))
+
+                del day_of_cost, category, name_of_cost, price_of_cost
+
+            else:
+
+                left_col2, right_col2 = st.columns(2)
+
+                with left_col2:
+                    st.button(
+                        label="Add anyway!",
+                        on_click=db_service.add_to_database,
+                        args=(
+                            engine,
+                            day_of_cost,
+                            category,
+                            store,
+                            name_of_cost,
+                            price_of_cost,
+                            unncessary,
+                            "append"))
+
+                with right_col2:
+                    st.button(
+                        label="Replace!",
+                        on_click=db_service.add_to_database,
+                        args=(
+                            engine,
+                            day_of_cost,
+                            category,
+                            store,
+                            name_of_cost,
+                            price_of_cost,
+                            unncessary,
+                            "replace"))
