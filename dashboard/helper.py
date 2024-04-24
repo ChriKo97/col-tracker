@@ -8,11 +8,10 @@ from sqlalchemy.engine import Engine
 def connect_to_database(
         user: str = "admin",
         password: str = "",
-        name: str = "col",
         host: str = "col-database",
         port: int = 5432) -> Engine:
 
-    engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{name}")
+    engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/col")
 
     return engine
 
