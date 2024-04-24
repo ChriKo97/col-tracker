@@ -19,7 +19,7 @@ def create_end_date(
     elif end == "After 5 years":
         end_date = start_date + relativedelta(years=5)
     elif end == "Never":
-        end_date = date(2999, 12, 31)
+        end_date = date(2099, 12, 31)
     elif end == "Choose a date":
         end_date = st.date_input(
             label="recurring_end_date_input",
