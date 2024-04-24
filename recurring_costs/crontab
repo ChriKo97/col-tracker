@@ -1,0 +1,3 @@
+# START CRON JOB
+0 1 * * * python3 /app/main.py
+# end

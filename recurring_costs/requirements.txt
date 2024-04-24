@@ -1,0 +1,4 @@
+pandas
+python_dateutil
+SQLAlchemy
+psycopg2-binary

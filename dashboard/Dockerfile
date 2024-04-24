@@ -11,8 +11,8 @@ RUN mkdir /app
 RUN chown -R admin /app
 USER admin
 
-COPY ./dashboard/ ./app
+COPY . ./app
 
 WORKDIR /app
 
-ENTRYPOINT ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "Analysis.py", "--server.port=8501", "--server.address=0.0.0.0"]

@@ -6,9 +6,6 @@ import recurring_costs.main as main
 import streamlit as st
 
 
-from dotenv import load_dotenv
-load_dotenv()
-
 db_user = os.getenv("POSTGRES_USER", "admin")
 db_password = os.getenv("POSTGRES_PASSWORD")
 db_host = os.getenv("DB_HOST", "col-database")
