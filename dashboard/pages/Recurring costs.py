@@ -1,7 +1,7 @@
 import os
 
 import helper
-import recurring_costs.main as main
+import recurring_costs.recurring_costs as recurring_costs
 
 import streamlit as st
 
@@ -19,7 +19,7 @@ engine = helper.connect_to_database(
 
 st.set_page_config(layout='wide')
 
-main.view_recurring_costs(engine)
+recurring_costs.view_recurring_costs(engine)
 
-main.add_recurring_cost(engine)
+recurring_costs.add_recurring_cost(engine)
 

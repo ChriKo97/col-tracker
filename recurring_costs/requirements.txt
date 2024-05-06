@@ -1,4 +1,4 @@
 pandas
-python_dateutil
+python-dateutil
 SQLAlchemy
 psycopg2-binary
