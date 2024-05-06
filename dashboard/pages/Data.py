@@ -17,6 +17,10 @@ engine = helper.connect_to_database(
     host=db_host,
     port=db_port)
 
+with st.expander("Add single entry"):
+    update_data.add_single_entry(
+        engine=engine)
+
 with st.expander("Append to existing data"):
     update_data.upload_new_file(
         engine=engine,

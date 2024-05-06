@@ -2,12 +2,49 @@ import pandas as pd
 import streamlit as st
 
 
+def add_single_entry(
+        engine):
+
+    date = st.date_input(
+        label="Date")
+
+    name = st.text_input(
+        label="Name")
+
+    category = st.text_input(
+        label="Category")
+
+    store = st.text_input(
+        label="Store")
+
+    cost = st.number_input(
+        label="Price",
+        step=0.01)
+
+    unnecessary = st.checkbox(
+        label="Is this cost unnecessary?")
+
+    if date and name and category and cost:
+
+        df = pd.DataFrame(
+            data=[[date, name, category, store, cost, unnecessary]],
+            columns=["date", "name", "category", "store", "cost", "unnecessary"])
+
+        st.button(
+            label="Add",
+            on_click=feed_to_database,
+            args=(
+                df,
+                engine,
+                "append"))
+
+
 def check_dataframe(df):
     if len(df.columns) > 6:
         msg = "Detected extra columns in your file. "
         msg += "Please check if your file is in the correct format."
         raise ValueError(msg)
-    
+
     if len(df) < 6:
         msg = "Detected missing columns in your file. "
         msg += "Please check if your file is in the correct format."
