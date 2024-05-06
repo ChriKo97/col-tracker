@@ -49,14 +49,17 @@ def check_dataframe(df):
         msg = "Detected missing columns in your file. "
         msg += "Please check if your file is in the correct format."
         raise ValueError(msg)
-    
-    correct_list = sorted(['category', 'cost', 'date', 'name', 'store', 'unnecessary'])
+
+    correct_list = sorted(
+        ['category', 'cost', 'date', 'name', 'store', 'unnecessary'])
     if sorted(df.columns) != correct_list:
         msg = "Detected not supported column names in your file. "
         msg += "Please check if your file is in the correct format. "
-        msg += f"The correct columns are {correct_list} but your column names are "
+        msg += f"The correct columns are {
+            correct_list} but your column names are "
         msg += f"{sorted(df.columns)}"
         raise ValueError(msg)
+
 
 def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
@@ -66,13 +69,15 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+
 def check_prepare_file(file):
 
     # read dataframe
     try:
         df = pd.read_excel(file)
     except Exception as e:
-        st.error(f"Something is wrong with your file and can't be parsed correctly: {e}")
+        st.error(
+            f"Something is wrong with your file and can't be parsed correctly: {e}")
         return False
 
     # check if dataframe seems correct
@@ -86,7 +91,8 @@ def check_prepare_file(file):
     try:
         cleaned_df = clean_dataframe(df)
     except Exception as e:
-        st.error(f"Something went wrong preparing your Dataframe for the database: {e}")
+        st.error(
+            f"Something went wrong preparing your Dataframe for the database: {e}")
         return False
 
     # display the dataframe
@@ -95,14 +101,16 @@ def check_prepare_file(file):
 
     return cleaned_df
 
+
 def confirm(add_replace):
     if add_replace == "append":
         msg = "I understand that everything in the table will be *added* to the database"
         return st.checkbox(msg)
-    
+
     elif add_replace == "replace":
         msg = "I understand that everything in the database will be *deleted* and *replaced* by the table"
         return st.checkbox(msg)
+
 
 def feed_to_database(
         df,
@@ -110,18 +118,19 @@ def feed_to_database(
         append_replace):
 
     if append_replace == "append":
-            df.to_sql(
-                name="col",
-                con=engine,
-                if_exists=append_replace, 
-                index=False)
+        df.to_sql(
+            name="col",
+            con=engine,
+            if_exists=append_replace,
+            index=False)
 
     elif append_replace == "replace":
-            df.to_sql(
-                name="col",
-                con=engine,
-                if_exists=append_replace, 
-                index=False)
+        df.to_sql(
+            name="col",
+            con=engine,
+            if_exists=append_replace,
+            index=False)
+
 
 def upload_new_file(
         engine,
@@ -136,7 +145,7 @@ def upload_new_file(
         label=label,
         key=append_replace,
         help=help)
-    
+
     if file:
         df = check_prepare_file(file)
 
