@@ -4,12 +4,13 @@ RUN apt-get update && apt-get -y install cron vim
 
 WORKDIR /app
 
-COPY crontab /etc/crontab
 COPY requirements.txt ./
-COPY main.py /app/main.py
 
 RUN python -m pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY crontab /etc/crontab
+COPY main.py /app/main.py
 
 RUN chmod 0644 /etc/crontab
 
