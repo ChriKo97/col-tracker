@@ -42,14 +42,31 @@ def cost_per_item(cat_df: pd.DataFrame):
 
     df = cat_df.copy()
 
-    # cost per item
-    df = df.groupby("name", as_index=False).sum(numeric_only=True)
-    df.sort_values("cost", inplace=True, ignore_index=True)
-    st.plotly_chart(
-        figure_or_data=px.bar(
-            data_frame=df, x="name", y="cost",
-            title="Cost per item"),
-        use_container_width=True)
+    # selection for total or monthly mean
+    total_monthly = st.radio(
+        label="", key="total_or_monthly_mean",
+        options=["Total", "Monthly mean"],
+        horizontal=True)
+
+    # total fig
+    total_df = df.groupby("name", as_index=False).sum(numeric_only=True)
+    total_df.sort_values("cost", inplace=True, ignore_index=True)
+    total_fig = px.bar(
+        data_frame=total_df, x="name", y="cost",
+        title="Total cost per item")
+
+    # monthly mean fig
+    monthly_df = df.groupby(["name", "month"], as_index=False).sum(numeric_only=True)
+    monthly_df = monthly_df.groupby("name", as_index=False).mean(numeric_only=False)
+    monthly_df.sort_values("cost", inplace=True, ignore_index=True)
+    monthly_fig = px.bar(
+        data_frame=monthly_df, x="name", y="cost",
+        title="Mean monthly cost per item")
+
+    if total_monthly == "Total":
+        st.plotly_chart(total_fig, use_container_width=True)
+    elif total_monthly == "Monthly mean":
+        st.plotly_chart(monthly_fig, use_container_width=True)
     
 def unncessary_spent(cat_df: pd.DataFrame):
 
