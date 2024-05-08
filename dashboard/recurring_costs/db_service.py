@@ -11,9 +11,9 @@ from sqlalchemy.exc import ProgrammingError
 
 def check_if_in_database(
         engine: Engine,
-        name: str) -> Tuple[bool, pd.DataFrame]:
+        item: str) -> Tuple[bool, pd.DataFrame]:
 
-    sql = f"SELECT * FROM recurring_costs WHERE name = '{name}'"
+    sql = f"SELECT * FROM recurring_costs WHERE item = '{item}'"
 
     df = pd.read_sql(sql, engine)
 
@@ -47,7 +47,7 @@ def create_table(engine: Engine):
                 "start" DATE,
                 "end" DATE,
                 frequency TEXT,
-                name TEXT,
+                item TEXT,
                 category TEXT,
                 cost DOUBLE PRECISION,
                 store TEXT,
@@ -64,7 +64,7 @@ def add_to_table(
         start_date: datetime.date,
         end_date: datetime.date,
         frequency: str,
-        name: str,
+        item: str,
         category: str,
         cost: float,
         store: str,
@@ -75,7 +75,7 @@ def add_to_table(
             "start": start_date,
             "end": end_date,
             "frequency": frequency,
-            "name": name,
+            "item": item,
             "category": category,
             "cost": cost,
             "store": store,
@@ -91,13 +91,13 @@ def add_to_table(
 
 def remove_from_table(
         engine: Engine,
-        name: str):
+        item: str):
 
     with engine.connect() as con:
 
         sql = f"""
             DELETE FROM recurring_costs
-            WHERE name = '{name}'
+            WHERE item = '{item}'
         """
 
         con.execute(text(sql))
@@ -122,14 +122,14 @@ def add_to_database(
     if append_replace == "replace":
         remove_from_table(
             engine=engine,
-            name=name_of_cost)
+            item=name_of_cost)
 
     add_to_table(
         engine=engine,
         start_date=start_date,
         end_date=end_date,
         frequency=frequency,
-        name=name_of_cost,
+        item=name_of_cost,
         category=category,
         cost=price_of_cost,
         store=store,

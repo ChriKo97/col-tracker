@@ -93,10 +93,10 @@ def add_recurring_cost(engine: Engine):
 
             in_database, data_entry = db_service.check_if_in_database(
                 engine=engine,
-                name=name_of_cost)
+                item=name_of_cost)
 
             if in_database:
-                st.write("Entry with that name already exists in database:")
+                st.write("Entry with that item name already exists in database:")
                 st.dataframe(data_entry, use_container_width=True)
 
         if start_date and category and name_of_cost and price_of_cost:

@@ -81,7 +81,7 @@ def create_cost_df(row):
     df = pd.DataFrame()
     df["date"] = date_range
     df["category"] = row["category"]
-    df["name"] = row["name"]
+    df["item"] = row["item"]
     df["category"] = row["category"]
     df["cost"] = row["cost"]
     df["store"] = row["store"]
@@ -101,7 +101,7 @@ def remove_duplicates(
 
     df = pd.DataFrame(
         data=(all_costs ^ existing_costs),
-        columns=["date", "category", "name", "cost", "store", "unnecessary"])
+        columns=["date", "category", "item", "cost", "store", "unnecessary"])
 
     return df
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
             sql = f"""
                 SELECT * FROM col
-                WHERE name = '{row["name"]}'
+                WHERE item = '{row["item"]}'
                 AND category = '{row["category"]}'
                 AND cost = '{row["cost"]}'
             """

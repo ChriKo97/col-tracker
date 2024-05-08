@@ -33,11 +33,11 @@ def create_mapping(
         _map: Dict = {}) -> Dict[str, str]:
     
     for idx, row in df.iterrows():
-        if not row["name"] in _map.keys():
-            _map[row["name"]] = row["category"]
+        if not row["item"] in _map.keys():
+            _map[row["item"]] = row["category"]
         else:
-            if not row["category"] == _map[row["name"]]:
-                raise UserWarning(f"Different categories for {row['name']}")
+            if not row["category"] == _map[row["item"]]:
+                raise UserWarning(f"Different categories for {row['item']}")
 
     return _map
 
@@ -55,10 +55,10 @@ def resample_data(
         end=end_date,
         freq="D")
 
-    for name, cat in _map.items():
+    for item, cat in _map.items():
         tmp_df = pd.DataFrame({
             "date": date_range,
-            "name": name,
+            "item": item,
             "category": cat,
             "cost": 0,
             "store": "",

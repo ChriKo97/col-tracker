@@ -49,18 +49,18 @@ def cost_per_item(cat_df: pd.DataFrame):
         horizontal=True)
 
     # total fig
-    total_df = df.groupby("name", as_index=False).sum(numeric_only=True)
+    total_df = df.groupby("item", as_index=False).sum(numeric_only=True)
     total_df.sort_values("cost", inplace=True, ignore_index=True)
     total_fig = px.bar(
-        data_frame=total_df, x="name", y="cost",
+        data_frame=total_df, x="item", y="cost",
         title="Total cost per item")
 
     # monthly mean fig
-    monthly_df = df.groupby(["name", "month"], as_index=False).sum(numeric_only=True)
-    monthly_df = monthly_df.groupby("name", as_index=False).mean(numeric_only=False)
+    monthly_df = df.groupby(["item", "month"], as_index=False).sum(numeric_only=True)
+    monthly_df = monthly_df.groupby("item", as_index=False).mean(numeric_only=False)
     monthly_df.sort_values("cost", inplace=True, ignore_index=True)
     monthly_fig = px.bar(
-        data_frame=monthly_df, x="name", y="cost",
+        data_frame=monthly_df, x="item", y="cost",
         title="Mean monthly cost per item")
 
     if total_monthly == "Total":
@@ -75,11 +75,11 @@ def unncessary_spent(cat_df: pd.DataFrame):
     # unnecessary spent money for cat
     df = df[df["unnecessary"]]
     df = df.groupby(
-        "name", as_index=False).sum(numeric_only=True)
+        "item", as_index=False).sum(numeric_only=True)
     df.sort_values("cost", inplace=True, ignore_index=True)
     st.plotly_chart(
         figure_or_data=px.bar(
-            data_frame=df, x="name", y="cost",
+            data_frame=df, x="item", y="cost",
             title="Unnecessary spent money by item"),
         use_container_width=True)
 

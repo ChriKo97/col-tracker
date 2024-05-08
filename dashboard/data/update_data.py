@@ -8,7 +8,7 @@ def add_single_entry(
     date = st.date_input(
         label="Date")
 
-    name = st.text_input(
+    item = st.text_input(
         label="Name")
 
     category = st.text_input(
@@ -24,11 +24,11 @@ def add_single_entry(
     unnecessary = st.checkbox(
         label="Is this cost unnecessary?")
 
-    if date and name and category and cost:
+    if date and item and category and cost:
 
         df = pd.DataFrame(
-            data=[[date, name, category, store, cost, unnecessary]],
-            columns=["date", "name", "category", "store", "cost", "unnecessary"])
+            data=[[date, item, category, store, cost, unnecessary]],
+            columns=["date", "item", "category", "store", "cost", "unnecessary"])
 
         st.button(
             label="Add",
@@ -53,7 +53,7 @@ def check_dataframe(df):
         raise ValueError(msg)
 
     correct_list = sorted(
-        ['category', 'cost', 'date', 'name', 'store', 'unnecessary'])
+        ['category', 'cost', 'date', 'item', 'store', 'unnecessary'])
     if sorted(df.columns) != correct_list:
         msg = "Detected not supported column names in your file. "
         msg += "Please check if your file is in the correct format. "
@@ -135,7 +135,7 @@ def upload_new_file(
     label = "Upload your Excel file containing your costs of living here"
 
     help = """This file should be an .xlsx file containing the columns
-    'date', 'category', 'name', 'cost', 'store' and 'unncessary'"""
+    'date', 'category', 'item', 'cost', 'store' and 'unncessary'"""
 
     file = st.file_uploader(
         label=label,
