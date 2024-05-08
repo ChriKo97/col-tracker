@@ -38,6 +38,8 @@ def add_single_entry(
                 engine,
                 "append"))
 
+        st.session_state["new_data_in_db"] = True
+
 
 def check_dataframe(df):
     if len(df.columns) > 6:
@@ -122,6 +124,8 @@ def feed_to_database(
         con=engine,
         if_exists=append_replace,
         index=False)
+
+    st.success("Succesfully added to database!")
 
 
 def upload_new_file(
