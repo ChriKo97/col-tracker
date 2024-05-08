@@ -150,3 +150,5 @@ def upload_new_file(
                     on_click=feed_to_database,
                     args=(df, engine, append_replace))
                 del file, df
+
+                st.session_state["new_data_in_db"] = True

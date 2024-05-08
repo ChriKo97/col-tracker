@@ -22,19 +22,24 @@ engine = helper.connect_to_database(
 
 st.set_page_config(layout="wide")
 
-# get min and max dates to choose timeframe from
-min_date, max_date = timeframe.get_min_max_dates(engine)
+if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"]:
 
-# choose time frame to look at
-time_frame = timeframe.display_timeframe_options(
-    min_date=min_date,
-    max_date=max_date)
+    # get min and max dates to choose timeframe from
+    min_date, max_date = timeframe.get_min_max_dates(engine)
+
+    # choose time frame to look at
+    time_frame = timeframe.display_timeframe_options(
+        min_date=min_date,
+        max_date=max_date)
 
 # create SQL query for dataframe
 sql = timeframe.create_sql_query(time_frame)
 
-# read and clean data
-orig_df = helper.read_clean_data(sql, engine)
+    # create SQL query for dataframe
+    sql = timeframe.create_sql_query(time_frame)
+
+    # read and clean data
+    orig_df = helper.read_clean_data(sql, engine)
 
 
 overall_tab, cat_tab, store_tab, article_tab = st.tabs(
