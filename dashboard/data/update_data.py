@@ -117,19 +117,11 @@ def feed_to_database(
         engine,
         append_replace):
 
-    if append_replace == "append":
-        df.to_sql(
-            name="col",
-            con=engine,
-            if_exists=append_replace,
-            index=False)
-
-    elif append_replace == "replace":
-        df.to_sql(
-            name="col",
-            con=engine,
-            if_exists=append_replace,
-            index=False)
+    df.to_sql(
+        name="col",
+        con=engine,
+        if_exists=append_replace,
+        index=False)
 
 
 def upload_new_file(
