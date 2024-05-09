@@ -32,8 +32,10 @@ if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"
         min_date=min_date,
         max_date=max_date)
 
-# create SQL query for dataframe
-sql = timeframe.create_sql_query(time_frame)
+    # get number of months for monthly mean calculations
+    n_months = helper.get_n_months(
+        start_date=min_date,
+        end_date=max_date)
 
     # create SQL query for dataframe
     sql = timeframe.create_sql_query(time_frame)

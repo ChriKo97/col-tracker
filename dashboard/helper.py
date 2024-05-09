@@ -16,6 +16,15 @@ def connect_to_database(
     return engine
 
 
+def get_n_months(
+        start_date: date,
+        end_date: date) -> int:
+
+    return \
+        (end_date.year - start_date.year) * 12 + \
+        end_date.month - start_date.month + 1
+
+
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
     # convert to datetime
