@@ -1,6 +1,8 @@
 from typing import Dict
+from datetime import date
 
 import pandas as pd
+import streamlit as st
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
@@ -8,13 +10,21 @@ from sqlalchemy.engine import Engine
 def connect_to_database(
         user: str = "admin",
         password: str = "",
-        name: str = "col",
         host: str = "col-database",
-        port: int = 5432):
+        port: int = 5432) -> Engine:
 
-    engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{name}")
+    engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/col")
 
     return engine
+
+
+def get_n_months(
+        start_date: date,
+        end_date: date) -> int:
+
+    return \
+        (end_date.year - start_date.year) * 12 + \
+        end_date.month - start_date.month + 1
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -34,11 +44,11 @@ def create_mapping(
         _map: Dict = {}) -> Dict[str, str]:
     
     for idx, row in df.iterrows():
-        if not row["name"] in _map.keys():
-            _map[row["name"]] = row["category"]
+        if not row["item"] in _map.keys():
+            _map[row["item"]] = row["category"]
         else:
-            if not row["category"] == _map[row["name"]]:
-                raise UserWarning(f"Different categories for {row['name']}")
+            if not row["category"] == _map[row["item"]]:
+                raise UserWarning(f"Different categories for {row['item']}")
 
     return _map
 
@@ -56,10 +66,10 @@ def resample_data(
         end=end_date,
         freq="D")
 
-    for name, cat in _map.items():
+    for item, cat in _map.items():
         tmp_df = pd.DataFrame({
             "date": date_range,
-            "name": name,
+            "item": item,
             "category": cat,
             "cost": 0,
             "store": "",
@@ -74,6 +84,7 @@ def resample_data(
 
     return df
 
+
 def add_date_infos(df: pd.DataFrame) -> pd.DataFrame:
 
     # add "month" column
@@ -86,6 +97,7 @@ def add_date_infos(df: pd.DataFrame) -> pd.DataFrame:
     df["dayofweek"] = df["date"].dt.dayofweek
 
     return df
+
 
 def read_clean_data(
         sql: str,
@@ -102,3 +114,26 @@ def read_clean_data(
     df = add_date_infos(df)
 
     return df
+
+
+def select_filter(
+        orig_df: pd.DataFrame,
+        filter_column: str):
+
+    df = orig_df.copy()
+
+    selected_filter = st.selectbox(
+        label=f"Choose a {filter_column}",
+        options=sorted(df[filter_column].unique()))
+
+    return selected_filter
+
+
+def filter_df(
+        orig_df: pd.DataFrame,
+        filter_column: str,
+        filter_selection: str):
+
+    df = orig_df[orig_df[filter_column] == filter_selection].copy()
+
+    return df.sort_values("cost", ignore_index=True)
