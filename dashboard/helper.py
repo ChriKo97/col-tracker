@@ -1,6 +1,8 @@
 from typing import Dict
+from datetime import date
 
 import pandas as pd
+import streamlit as st
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
@@ -82,6 +84,7 @@ def resample_data(
 
     return df
 
+
 def add_date_infos(df: pd.DataFrame) -> pd.DataFrame:
 
     # add "month" column
@@ -94,6 +97,7 @@ def add_date_infos(df: pd.DataFrame) -> pd.DataFrame:
     df["dayofweek"] = df["date"].dt.dayofweek
 
     return df
+
 
 def read_clean_data(
         sql: str,
@@ -110,3 +114,26 @@ def read_clean_data(
     df = add_date_infos(df)
 
     return df
+
+
+def select_filter(
+        orig_df: pd.DataFrame,
+        filter_column: str):
+
+    df = orig_df.copy()
+
+    selected_filter = st.selectbox(
+        label=f"Choose a {filter_column}",
+        options=sorted(df[filter_column].unique()))
+
+    return selected_filter
+
+
+def filter_df(
+        orig_df: pd.DataFrame,
+        filter_column: str,
+        filter_selection: str):
+
+    df = orig_df[orig_df[filter_column] == filter_selection].copy()
+
+    return df.sort_values("cost", ignore_index=True)

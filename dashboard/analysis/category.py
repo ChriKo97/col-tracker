@@ -2,22 +2,8 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-def select_category(orig_df: pd.DataFrame):
-
-    df = orig_df.copy()
-
-    cat = st.selectbox(
-        label="Choose a category",
-        options=sorted(df["category"].unique()))
-
-    return cat
 
 
-def filter_df(orig_df: pd.DataFrame, cat:str):
-
-    df = orig_df[orig_df["category"] == cat].copy()
-
-    return df.sort_values("cost", ignore_index=True)
 
 def cost_per_month(cat_df: pd.DataFrame):
 

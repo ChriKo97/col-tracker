@@ -2,8 +2,8 @@ import os
 
 import helper
 import analysis.timeframe as timeframe
-import analysis.overall as overall
-import analysis.category as category
+import analysis.overall_figures as overall_figures
+import analysis.figures as figures
 
 import streamlit as st
 
@@ -44,29 +44,89 @@ if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"
     orig_df = helper.read_clean_data(sql, engine)
 
 
-overall_tab, cat_tab, store_tab, article_tab = st.tabs(
-    ["Overall", "By category", "By store", "By article"])
+overall_tab, cat_tab, store_tab, item_tab = st.tabs(
+    ["Overall", "By category", "By store", "By item"])
 
 with overall_tab:
 
-    overall.cumulative_costs(orig_df)
+    overall_figures.cumulative_costs(orig_df)
 
-    overall.average_costs(orig_df)
+    figures.time_bar_graph(orig_df, "category", "category")
 
-    overall.unnecessary_cumulative(orig_df)
+    figures.grouped_bar_graph(
+        df=orig_df,
+        tab_name="overall",
+        n_months=n_months,
+        primary_grouping_col="category")
 
-    overall.costs_over_time(orig_df)
+    overall_figures.unnecessary_cumulative(orig_df)
+
+    overall_figures.costs_over_time(orig_df)
 
 with cat_tab:
 
-    cat = category.select_category(orig_df)
+    cat = helper.select_filter(
+        orig_df=orig_df,
+        filter_column="category")
 
-    cat_df = category.filter_df(orig_df, cat)
+    cat_df = helper.filter_df(
+        orig_df=orig_df,
+        filter_column="category",
+        filter_selection=cat)
 
-    category.cost_per_month(cat_df)
+    figures.time_bar_graph(
+        df=cat_df,
+        primary_grouping_col="category")
 
-    category.cost_per_item(cat_df)
+    figures.grouped_bar_graph(
+        df=cat_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        tab_name="cat")
 
-    category.unncessary_spent(cat_df)
+    figures.grouped_bar_graph(
+        df=cat_df,
+        primary_grouping_col="store",
+        n_months=n_months,
+        tab_name="cat")
 
-    category.cost_per_store(cat_df)
+    figures.grouped_bar_graph(
+        df=cat_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        unnecessary=True,
+        tab_name="cat")
+
+with store_tab:
+
+    store = helper.select_filter(
+        orig_df=orig_df,
+        filter_column="store")
+
+    store_df = helper.filter_df(
+        orig_df=orig_df,
+        filter_column="store",
+        filter_selection=store)
+
+    figures.time_bar_graph(
+        df=store_df,
+        primary_grouping_col="store")
+
+    figures.grouped_bar_graph(
+        df=store_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        tab_name="store")
+
+    figures.grouped_bar_graph(
+        df=store_df,
+        primary_grouping_col="category",
+        n_months=n_months,
+        tab_name="store")
+
+    figures.grouped_bar_graph(
+        df=store_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        unnecessary=True,
+        tab_name="store")
