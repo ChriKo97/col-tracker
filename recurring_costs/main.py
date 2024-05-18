@@ -9,14 +9,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 import pandas as pd
 
-from dotenv import load_dotenv
-load_dotenv()
-
 
 db_user = os.getenv("POSTGRES_USER", "admin")
 db_password = os.getenv("POSTGRES_PASSWORD")
-db_host = os.getenv("DB_HOST", "col-database")
-db_port = os.getenv("DB_PORT", 5432)
+db_host = os.getenv("POSTGRES_HOST", "col-database")
+db_port = os.getenv("POSTGRES_PORT", 5432)
 
 
 def get_timedelta(freq: str) -> relativedelta:
