@@ -1,6 +1,7 @@
 import os
 import logging
 from typing import List
+import time
 
 from dateutil.relativedelta import relativedelta
 from datetime import date
@@ -106,7 +107,7 @@ def remove_duplicates(
     return df
 
 
-if __name__ == "__main__":
+def add_recurring_costs():
 
     logging.basicConfig(
         level=logging.INFO,
@@ -145,3 +146,17 @@ if __name__ == "__main__":
 
     except Exception as e:
         logging.error(e)
+
+
+if __name__ == "__main__":
+
+    while True:
+
+        start_time = time.time()
+
+        add_recurring_costs()
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+
+        time.sleep(10 - elapsed_time)

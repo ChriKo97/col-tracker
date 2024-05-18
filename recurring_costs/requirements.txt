@@ -1,4 +1,0 @@
-pandas
-python-dateutil
-SQLAlchemy
-psycopg2-binary
