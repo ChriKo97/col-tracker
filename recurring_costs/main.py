@@ -1,6 +1,7 @@
 import os
 import logging
 from typing import List
+import time
 
 from dateutil.relativedelta import relativedelta
 from datetime import date
@@ -8,14 +9,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 import pandas as pd
 
-from dotenv import load_dotenv
-load_dotenv()
-
 
 db_user = os.getenv("POSTGRES_USER", "admin")
 db_password = os.getenv("POSTGRES_PASSWORD")
-db_host = os.getenv("DB_HOST", "col-database")
-db_port = os.getenv("DB_PORT", 5432)
+db_host = os.getenv("POSTGRES_HOST", "col-database")
+db_port = os.getenv("POSTGRES_PORT", 5432)
 
 
 def get_timedelta(freq: str) -> relativedelta:
@@ -106,7 +104,7 @@ def remove_duplicates(
     return df
 
 
-if __name__ == "__main__":
+def add_recurring_costs():
 
     logging.basicConfig(
         level=logging.INFO,
@@ -145,3 +143,17 @@ if __name__ == "__main__":
 
     except Exception as e:
         logging.error(e)
+
+
+if __name__ == "__main__":
+
+    while True:
+
+        start_time = time.time()
+
+        add_recurring_costs()
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+
+        time.sleep(10 - elapsed_time)

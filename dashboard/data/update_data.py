@@ -51,9 +51,8 @@ def check_dataframe(df):
         msg = "Detected missing columns in your file. "
         msg += "Please check if your file is in the correct format."
         raise ValueError(msg)
-
-    correct_list = sorted(
-        ['category', 'cost', 'date', 'item', 'store', 'unnecessary'])
+    
+    correct_list = sorted(['category', 'cost', 'date', 'item', 'store', 'unnecessary'])
     if sorted(df.columns) != correct_list:
         msg = "Detected not supported column names in your file. "
         msg += "Please check if your file is in the correct format. "
