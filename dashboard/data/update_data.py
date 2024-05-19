@@ -56,8 +56,7 @@ def check_dataframe(df):
     if sorted(df.columns) != correct_list:
         msg = "Detected not supported column names in your file. "
         msg += "Please check if your file is in the correct format. "
-        msg += f"The correct columns are {
-            correct_list} but your column names are "
+        msg += f"The correct columns are {correct_list} but your column names are "
         msg += f"{sorted(df.columns)}"
         raise ValueError(msg)
 

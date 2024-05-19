@@ -46,8 +46,7 @@ def grouped_bar_graph(
     if unnecessary:
         df = df[df["unnecessary"]]
         total_title = f"Total unnecessary cost per {primary_grouping_col}"
-        monthly_title = f"Mean monthly unnecessary cost per {
-            primary_grouping_col}"
+        monthly_title = f"Mean monthly unnecessary cost per {primary_grouping_col}"
     else:
         total_title = f"Total cost per {primary_grouping_col}"
         monthly_title = f"Mean monthly cost per {primary_grouping_col}"
