@@ -26,7 +26,12 @@ st.set_page_config(layout="wide")
 # get min and max dates to choose timeframe from
 min_date, max_date = timeframe.get_min_max_dates(engine)
 
-if (not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"]) and min_date and max_date:
+if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"]:
+
+    if not helper.data_exists(engine):
+        msg = f"There is no data in your database. Add entries in the 'Data' page!"
+        raise UserWarning(msg)
+
     # choose time frame to look at
     time_frame = timeframe.display_timeframe_options(
         min_date=min_date,

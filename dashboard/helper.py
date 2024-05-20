@@ -18,6 +18,10 @@ def connect_to_database(
     return engine
 
 
+def data_exists(engine):
+    return not pd.read_sql("SELECT * FROM col LIMIT 1", engine).empty
+
+
 def get_n_months(
         start_date: date,
         end_date: date) -> int:
