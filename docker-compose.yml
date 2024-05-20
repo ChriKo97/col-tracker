@@ -6,32 +6,24 @@ services:
     volumes: 
       - ./data/col-data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER:-col}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-col}
       - POSTGRES_DB=col
-
-  col-cron:
-    container_name: col-cron
-    build: /recurring_costs/
-    restart: always
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   col-dashboard:
     container_name: col-dashboard
-    build: /dashboard/
+    build: ./dashboard/
     ports:
       - "8501:8501"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER:-col}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-col}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
     restart: always
+    depends_on:
+      - col-database
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -46,3 +38,5 @@ services:
         - ./data/pgadmin:/var/lib/pgadmin
     ports:
         - "8080:80"
+    depends_on:
+      - col-database

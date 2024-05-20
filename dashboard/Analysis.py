@@ -6,6 +6,7 @@ import analysis.overall_figures as overall_figures
 import analysis.figures as figures
 
 import streamlit as st
+import pandas as pd
 
 
 db_user = os.getenv("POSTGRES_USER", "admin")
@@ -23,6 +24,10 @@ engine = helper.connect_to_database(
 st.set_page_config(layout="wide")
 
 if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"]:
+
+    if not helper.data_exists(engine):
+        msg = f"There is no data in your database. Add entries in the 'Data' page!"
+        raise UserWarning(msg)
 
     # get min and max dates to choose timeframe from
     min_date, max_date = timeframe.get_min_max_dates(engine)
@@ -42,7 +47,6 @@ if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"
 
     # read and clean data
     orig_df = helper.read_clean_data(sql, engine)
-
 
 overall_tab, cat_tab, store_tab, item_tab = st.tabs(
     ["Overall", "By category", "By store", "By item"])
