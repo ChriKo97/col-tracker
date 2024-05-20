@@ -23,14 +23,14 @@ engine = helper.connect_to_database(
 
 st.set_page_config(layout="wide")
 
-# get min and max dates to choose timeframe from
-min_date, max_date = timeframe.get_min_max_dates(engine)
-
 if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"]:
 
     if not helper.data_exists(engine):
         msg = f"There is no data in your database. Add entries in the 'Data' page!"
         raise UserWarning(msg)
+
+    # get min and max dates to choose timeframe from
+    min_date, max_date = timeframe.get_min_max_dates(engine)
 
     # choose time frame to look at
     time_frame = timeframe.display_timeframe_options(
@@ -48,91 +48,89 @@ if not 'new_data_in_db' in st.session_state or st.session_state["new_data_in_db"
     # read and clean data
     orig_df = helper.read_clean_data(sql, engine)
 
-    overall_tab, cat_tab, store_tab, item_tab = st.tabs(
-        ["Overall", "By category", "By store", "By item"])
+overall_tab, cat_tab, store_tab, item_tab = st.tabs(
+    ["Overall", "By category", "By store", "By item"])
 
-    with overall_tab:
+with overall_tab:
 
-        overall_figures.cumulative_costs(orig_df)
+    overall_figures.cumulative_costs(orig_df)
 
-        figures.time_bar_graph(orig_df, "category", "category")
+    figures.time_bar_graph(orig_df, "category", "category")
 
-        figures.grouped_bar_graph(
-            df=orig_df,
-            tab_name="overall",
-            n_months=n_months,
-            primary_grouping_col="category")
+    figures.grouped_bar_graph(
+        df=orig_df,
+        tab_name="overall",
+        n_months=n_months,
+        primary_grouping_col="category")
 
-        overall_figures.unnecessary_cumulative(orig_df)
+    overall_figures.unnecessary_cumulative(orig_df)
 
-        overall_figures.costs_over_time(orig_df)
+    overall_figures.costs_over_time(orig_df)
 
-    with cat_tab:
+with cat_tab:
 
-        cat = helper.select_filter(
-            orig_df=orig_df,
-            filter_column="category")
+    cat = helper.select_filter(
+        orig_df=orig_df,
+        filter_column="category")
 
-        cat_df = helper.filter_df(
-            orig_df=orig_df,
-            filter_column="category",
-            filter_selection=cat)
+    cat_df = helper.filter_df(
+        orig_df=orig_df,
+        filter_column="category",
+        filter_selection=cat)
 
-        figures.time_bar_graph(
-            df=cat_df,
-            primary_grouping_col="category")
+    figures.time_bar_graph(
+        df=cat_df,
+        primary_grouping_col="category")
 
-        figures.grouped_bar_graph(
-            df=cat_df,
-            primary_grouping_col="item",
-            n_months=n_months,
-            tab_name="cat")
+    figures.grouped_bar_graph(
+        df=cat_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        tab_name="cat")
 
-        figures.grouped_bar_graph(
-            df=cat_df,
-            primary_grouping_col="store",
-            n_months=n_months,
-            tab_name="cat")
+    figures.grouped_bar_graph(
+        df=cat_df,
+        primary_grouping_col="store",
+        n_months=n_months,
+        tab_name="cat")
 
-        figures.grouped_bar_graph(
-            df=cat_df,
-            primary_grouping_col="item",
-            n_months=n_months,
-            unnecessary=True,
-            tab_name="cat")
+    figures.grouped_bar_graph(
+        df=cat_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        unnecessary=True,
+        tab_name="cat")
 
-    with store_tab:
+with store_tab:
 
-        store = helper.select_filter(
-            orig_df=orig_df,
-            filter_column="store")
+    store = helper.select_filter(
+        orig_df=orig_df,
+        filter_column="store")
 
-        store_df = helper.filter_df(
-            orig_df=orig_df,
-            filter_column="store",
-            filter_selection=store)
+    store_df = helper.filter_df(
+        orig_df=orig_df,
+        filter_column="store",
+        filter_selection=store)
 
-        figures.time_bar_graph(
-            df=store_df,
-            primary_grouping_col="store")
+    figures.time_bar_graph(
+        df=store_df,
+        primary_grouping_col="store")
 
-        figures.grouped_bar_graph(
-            df=store_df,
-            primary_grouping_col="item",
-            n_months=n_months,
-            tab_name="store")
+    figures.grouped_bar_graph(
+        df=store_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        tab_name="store")
 
-        figures.grouped_bar_graph(
-            df=store_df,
-            primary_grouping_col="category",
-            n_months=n_months,
-            tab_name="store")
+    figures.grouped_bar_graph(
+        df=store_df,
+        primary_grouping_col="category",
+        n_months=n_months,
+        tab_name="store")
 
-        figures.grouped_bar_graph(
-            df=store_df,
-            primary_grouping_col="item",
-            n_months=n_months,
-            unnecessary=True,
-            tab_name="store")
-else:
-    st.write("No data to show yet!")
+    figures.grouped_bar_graph(
+        df=store_df,
+        primary_grouping_col="item",
+        n_months=n_months,
+        unnecessary=True,
+        tab_name="store")
